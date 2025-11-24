@@ -1,0 +1,22 @@
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Bootstrap\App;
+
+$app = new App();
+
+if (empty($argv[1])) {
+    $app->error();
+}
+
+switch ($argv[1]) {
+    case 'run':
+        $app->run();
+    case 'help':
+        $app->help();
+    case 'routes':
+        $app->routes();
+    default:
+        $app->error($argv[1]);
+}
