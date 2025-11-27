@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Core\Application\Http\Controllers;
 
-use Bootstrap\Http\HttpResponse;
-use Bootstrap\Http\Request;
+use Core\Framework\Http\HttpResponse;
+use Core\Framework\Http\Request;
 
 // deve eventualmente estender de algum basecontroller
-// ver como passar query params por aki tb tipo /messages/id
 class MessageController
 {
     public function run(Request $request): HttpResponse

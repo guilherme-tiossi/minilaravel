@@ -1,9 +1,8 @@
 <?php
 
-namespace Bootstrap\Http;
+namespace Core\Framework\Http;
 
-use App\Http\Exceptions\AppException;
-use Bootstrap\Http\Router;
+use Core\Application\Http\Exceptions\AppException;
 use Exception;
 
 class Kernel

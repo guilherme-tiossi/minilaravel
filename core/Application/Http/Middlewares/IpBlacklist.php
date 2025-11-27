@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Middlewares;
+namespace Core\Application\Http\Middlewares;
 
-use App\Http\Exceptions\AppException;
-use Bootstrap\Http\Middleware;
-use Bootstrap\Http\Request;
+use Core\Application\Http\Exceptions\AppException;
+use Core\Framework\Http\Middleware;
+use Core\Framework\Http\Request;
 
 class IpBlacklist implements Middleware
 {

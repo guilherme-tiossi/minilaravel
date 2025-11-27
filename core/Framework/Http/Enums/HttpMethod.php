@@ -1,6 +1,6 @@
 <?php
 
-namespace Bootstrap\Http\Enums;
+namespace Core\Framework\Http\Enums;
 
 enum HttpMethod: string
 {

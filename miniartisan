@@ -2,7 +2,7 @@
 
 require __DIR__ . '/vendor/autoload.php';
 
-use Bootstrap\App;
+use Core\Framework\App;
 
 $app = new App();
 

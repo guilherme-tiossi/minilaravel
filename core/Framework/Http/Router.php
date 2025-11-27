@@ -1,9 +1,8 @@
 <?php
 
-namespace Bootstrap\Http;
+namespace Core\Framework\Http;
 
-use Bootstrap\Http\Enums\HttpMethod;
-use Bootstrap\Http\Middleware;
+use Core\Framework\Http\Enums\HttpMethod;
 
 class Router
 {

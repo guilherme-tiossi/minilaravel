@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Controllers\MessageController;
-use Bootstrap\Http\Enums\HttpMethod;
-use Bootstrap\Http\Router;
-use App\Http\Middlewares\IpBlacklist;
+use Core\Application\Http\Controllers\MessageController;
+use Core\Framework\Http\Enums\HttpMethod;
+use Core\Framework\Http\Router;
+use Core\Application\Http\Middlewares\IpBlacklist;
 
+# ver de tirar esse get instance
 $router = Router::getInstance();
 
 $router->addGroup(IpBlacklist::class, [

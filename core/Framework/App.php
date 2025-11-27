@@ -1,11 +1,12 @@
 <?php
 
-namespace Bootstrap;
+namespace Core\Framework;
 
-require __DIR__ . '/../routes/api.php';
-require __DIR__ . '/../vendor/autoload.php';
+# POR ENQUANTO MANTEMOS ISSO AQUI - ESTÁ ERRADO POIS NADA DE APPLICATION DEVE CONTAMINAR
+# O FRAMEWORK, MAS ASSIM QUE POSSÍVEL FAREMOS UM ROUTESERVICEPROVIDER
+require __DIR__ . '/../Application/routes/api.php';
 
-use Bootstrap\Http\Router;
+use Core\Framework\Http\Router;
 
 class App 
 {
@@ -13,7 +14,7 @@ class App
     {
         $host = "0.0.0.0";
         $port = "8080";
-        $docroot = __DIR__ . "/../public";
+        $docroot = __DIR__ . "/public";
 
         echo "Starting server at http://{$host}:{$port}\n";
         echo "Serving from: {$docroot}\n";

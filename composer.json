@@ -1,8 +1,7 @@
 {
     "autoload": {
         "psr-4": {
-            "Bootstrap\\": "bootstrap/",
-            "App\\": "app/"
+            "Core\\": "core/"
         }
     }
 }

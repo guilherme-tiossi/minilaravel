@@ -1,6 +1,6 @@
 <?php
 
-namespace Bootstrap\Http;
+namespace Core\Framework\Http;
 
 interface Middleware
 {
