@@ -11,8 +11,7 @@ class Kernel
     {
         try {
             $request = new Request();
-            $router = Router::getInstance();
-            return $router->runRoute($request);
+            return Router::runRoute($request);
         } catch (AppException $e) {
             return new HttpResponse($e->getCode(), ['message' => $e->getMessage()]);
         } catch (Exception $e) {

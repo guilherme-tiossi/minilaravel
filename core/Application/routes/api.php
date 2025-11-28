@@ -5,12 +5,9 @@ use Core\Framework\Http\Enums\HttpMethod;
 use Core\Framework\Http\Router;
 use Core\Application\Http\Middlewares\IpBlacklist;
 
-# ver de tirar esse get instance
-$router = Router::getInstance();
-
-$router->addGroup(IpBlacklist::class, [
+Router::group(IpBlacklist::class, [
     [HttpMethod::GET, '/messages', MessageController::class, 'run']
 ]);
-$router->addRoute(HttpMethod::GET, '/messages', MessageController::class, 'run');
-$router->addRoute(HttpMethod::GET, '/messages/{uuid}', MessageController::class, 'show');
-$router->addRoute(HttpMethod::GET, '/messages/{uuid}/resource/{resourceUuid}', MessageController::class, 'runs');
+Router::get('/messages', MessageController::class, 'run');
+Router::get('/messages/{uuid}', MessageController::class, 'show');
+Router::get('/messages/{uuid}/resource/{resourceUuid}', MessageController::class, 'runs');

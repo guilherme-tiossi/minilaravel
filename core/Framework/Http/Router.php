@@ -4,6 +4,7 @@ namespace Core\Framework\Http;
 
 use Core\Framework\Http\Enums\HttpMethod;
 
+# refatorar esse cara assim que possível, está muy gramde
 class Router
 {
     private static ?Router $instance = null;
@@ -26,19 +27,15 @@ class Router
         ]
     ];
 
-    public static function getInstance(): Router
+    public static function group(string $middleware, array $routes): void
     {
         if (!self::$instance) {
             self::$instance = new Router();
         }
-        return self::$instance;
-    }
 
-    public function addGroup(string $middleware, array $routes): void
-    {
         foreach ($routes as $route) {
             $middlewares = empty($route['middlewares']) ? [$middleware] : array_merge([$middleware, $route['middlewares']]); 
-            $this->addRoute(
+            self::$instance->addRoute(
                 method: $route[0],
                 uri: $route[1],
                 controller: $route[2],
@@ -48,7 +45,52 @@ class Router
         }
     }
 
-    public function addRoute(HttpMethod $method, string $uri, string $controller, string $methodName, ?array $middlewares = null): void
+    public static function get(string $uri, string $controller, string $methodName, ?array $middlewares = null): void
+    {
+        if (!self::$instance) {
+            self::$instance = new Router();
+        }
+
+        self::$instance->addRoute(HttpMethod::GET, $uri, $controller, $methodName, $middlewares);
+    }
+
+    public static function post(string $uri, string $controller, string $methodName, ?array $middlewares = null): void
+    {
+        if (!self::$instance) {
+            self::$instance = new Router();
+        }
+
+        self::$instance->addRoute(HttpMethod::POST, $uri, $controller, $methodName, $middlewares);
+    }
+
+    public static function patch(string $uri, string $controller, string $methodName, ?array $middlewares = null): void
+    {
+        if (!self::$instance) {
+            self::$instance = new Router();
+        }
+
+        self::$instance->addRoute(HttpMethod::PATCH, $uri, $controller, $methodName, $middlewares);
+    }
+
+    public static function put(string $uri, string $controller, string $methodName, ?array $middlewares = null): void
+    {
+        if (!self::$instance) {
+            self::$instance = new Router();
+        }
+
+        self::$instance->addRoute(HttpMethod::PUT, $uri, $controller, $methodName, $middlewares);
+    }
+
+    public static function delete(string $uri, string $controller, string $methodName, ?array $middlewares = null): void
+    {
+        if (!self::$instance) {
+            self::$instance = new Router();
+        }
+
+        self::$instance->addRoute(HttpMethod::DELETE, $uri, $controller, $methodName, $middlewares);
+    }
+
+    private function addRoute(HttpMethod $method, string $uri, string $controller, string $methodName, ?array $middlewares = null): void
     {
         if (preg_match_all('/\{([^}]+)\}/', $uri, $matches)) {
             $params = [];
@@ -71,16 +113,38 @@ class Router
         }
     }
 
-    public function runRoute(Request $request): HttpResponse
+    public static function routes(): void
     {
+        if (!self::$instance) {
+            self::$instance = new Router();
+        }
+
+        foreach (self::$instance->routes as $httpMethod => $paramDefinitions) {
+            foreach ($paramDefinitions as $routes) {
+                if (!$routes) continue;
+                foreach ($routes as $route => $routeData) {
+                    $controller = substr($routeData['controller'], strrpos($routeData['controller'], "\\") + 1);
+                    $method = $routeData['methodName'];
+                    echo $httpMethod . ' - ' . $route . ' - ' . $controller . '::' . $method . "() \n";
+                }
+            }
+        }
+    }
+
+    public static function runRoute(Request $request): HttpResponse
+    {
+        if (!self::$instance) {
+            self::$instance = new Router();
+        }
+
         $uri = $request->uri;
         $method = $request->method;
 
-        $route = $this->routes[$method->value]['withoutParam'][$uri] ?? null;
+        $route = self::$instance->routes[$method->value]['withoutParam'][$uri] ?? null;
 
         $params = [];
-        if (!$route && substr_count($uri, '/') > 1 && !empty($this->routes[$method->value]['withParam'])) {
-            [$route, $params] = $this->searchRouteWithParameter($uri, $method->value);
+        if (!$route && substr_count($uri, '/') > 1 && !empty(self::$instance->routes[$method->value]['withParam'])) {
+            [$route, $params] = self::$instance->searchRouteWithParameter($uri, $method->value);
         }
 
         if (!$route) {

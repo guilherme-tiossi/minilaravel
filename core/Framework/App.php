@@ -34,20 +34,8 @@ class App
 
     public function routes(): void
     {
-        $router = Router::getInstance();
-
         echo "List of routes:\n";
-        // melhorar isso, muitos loops
-        foreach ($router->routes as $httpMethod => $paramDefinitions) {
-            foreach ($paramDefinitions as $routes) {
-                if (!$routes) continue;
-                foreach ($routes as $route => $routeData) {
-                    $controller = substr($routeData['controller'], strrpos($routeData['controller'], "\\") + 1);
-                    $method = $routeData['methodName'];
-                    echo $httpMethod . ' - ' . $route . ' - ' . $controller . '::' . $method . "() \n";
-                }
-            }
-        }
+        Router::routes();
         exit();
     }
 

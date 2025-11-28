@@ -8,4 +8,5 @@ enum HttpMethod: string
     case POST = 'POST';
     case PUT = 'PUT';
     case PATCH = 'PATCH';
+    case DELETE = 'DELETE';
 }
