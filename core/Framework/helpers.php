@@ -8,7 +8,26 @@ function dd()
     die;
 }
 
-function app(string $string)
+function app(string $path)
 {
-    # TODO
+    $dir = getcwd();
+
+    $i = 0;
+    while (basename($dir) !== 'core') {
+        $i++;
+        if (is_dir($dir . '/core')) {
+            chdir($dir . '/core');
+        } else {
+            chdir(dirname($dir));
+        }
+        $dir = getcwd();
+
+        if ($i >= 10) {
+            throw new Exception('Core folder not found!');
+        }
+     }
+
+    include $path;
+
+    chdir(__DIR__);
 }
