@@ -2,11 +2,8 @@
 
 namespace Core\Framework;
 
-# POR ENQUANTO MANTEMOS ISSO AQUI - ESTÁ ERRADO POIS NADA DE APPLICATION DEVE CONTAMINAR
-# O FRAMEWORK, MAS ASSIM QUE POSSÍVEL FAREMOS UM ROUTESERVICEPROVIDER
-require __DIR__ . '/../Application/routes/api.php';
-
 use Core\Framework\Http\Router;
+use Core\Framework\Providers\RouteServiceProvider;
 
 class App 
 {
@@ -34,6 +31,7 @@ class App
 
     public function routes(): void
     {
+        new RouteServiceProvider()->init();
         echo "List of routes:\n";
         Router::routes();
         exit();

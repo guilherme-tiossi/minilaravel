@@ -2,6 +2,7 @@
 
 namespace Core\Framework\Http;
 
+use Core\Framework\Providers\RouteServiceProvider;
 use Core\Application\Http\Exceptions\AppException;
 use Exception;
 
@@ -9,6 +10,8 @@ class Kernel
 {
     public function handle(): HttpResponse
     {
+        $this->registerProviders();
+
         try {
             $request = new Request();
             return Router::runRoute($request);
@@ -21,5 +24,10 @@ class Kernel
                 'trace' => $e->getTrace()
             ]);
         }
+    }
+
+    private function registerProviders(): void
+    {
+        new RouteServiceProvider()->init();
     }
 }

@@ -1,6 +1,8 @@
 <?php
 
+namespace Core\Framework\Providers;
+
 interface Provider
 {
-    public function run(): void;
+    public function init(): void;
 }

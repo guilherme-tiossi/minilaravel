@@ -5,6 +5,7 @@ namespace Core\Framework\Http;
 use Core\Framework\Http\Enums\HttpMethod;
 
 # refatorar esse cara assim que possível, está muy gramde
+# passar lógica de singleton para uma classe reutilizável e só fazer router implementar ela
 class Router
 {
     private static ?Router $instance = null;
