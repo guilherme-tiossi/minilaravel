@@ -19,6 +19,14 @@ class Request
 
     public function __construct()
     {
+        header('Content-Type: application/json');
+        #
+        # deixar isso aqui mais organizado em um provider
+        #
+        header('Access-Control-Allow-Origin: http://localhost:3000');
+        header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
+        header('Access-Control-Allow-Headers: Content-Type, Authorization');
+
         $this->method = HttpMethod::from($_SERVER['REQUEST_METHOD']);
         $this->uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $this->protocol = $_SERVER['SERVER_PROTOCOL'];
@@ -28,6 +36,11 @@ class Request
         $this->cookies = $_COOKIE;
         $this->raw = file_get_contents('php://input');
         $this->body = json_decode($this->raw) ?? $_POST;
-        $this->files = $_FILES; 
+        $this->files = $_FILES;
+
+        if ($this->method === HttpMethod::OPTIONS) {
+            http_response_code(204);
+            exit();
+        }
     }
 }
