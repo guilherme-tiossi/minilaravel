@@ -132,10 +132,15 @@ class Router
         }
     }
 
-    public static function runRoute(Request $request): HttpResponse
+    public static function runRoute(Request $request, array $globalMiddlewares): HttpResponse
     {
         if (!self::$instance) {
             self::$instance = new Router();
+        }
+
+        foreach ($globalMiddlewares as $middleware) {
+            $class = new $middleware;
+            $class->run($request);
         }
 
         $uri = $request->uri;

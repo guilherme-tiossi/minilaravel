@@ -4,6 +4,7 @@ namespace Core\Framework\Http;
 
 use Core\Framework\Providers\RouteServiceProvider;
 use Core\Application\Http\Exceptions\AppException;
+use Core\Application\Http\Middlewares\HandleCors;
 use Exception;
 
 class Kernel
@@ -12,9 +13,13 @@ class Kernel
     {
         $this->registerProviders();
 
+        $globalMiddlewares = [
+            HandleCors::class
+        ];
+
         try {
             $request = new Request();
-            return Router::runRoute($request);
+            return Router::runRoute($request, $globalMiddlewares);
         } catch (AppException $e) {
             return new HttpResponse($e->getCode(), ['message' => $e->getMessage()]);
         } catch (Exception $e) {
