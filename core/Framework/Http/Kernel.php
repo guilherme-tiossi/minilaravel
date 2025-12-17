@@ -17,6 +17,12 @@ class Kernel
             HandleCors::class
         ];
 
+        header('Content-Type: application/json');
+        header('X-Frame-Options: DENY');
+        header('X-Content-Type-Options: nosniff');
+        header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
+        header('Access-Control-Allow-Headers: Content-Type, Authorization');
+
         try {
             $request = new Request();
             return Router::runRoute($request, $globalMiddlewares);

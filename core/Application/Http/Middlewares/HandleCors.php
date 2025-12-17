@@ -20,9 +20,6 @@ class HandleCors implements Middleware
             header('Access-Control-Allow-Origin: ' . $request->origin);
         }
 
-        header('Content-Type: application/json');
-        header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
-        header('Access-Control-Allow-Headers: Content-Type, Authorization');
         if ($request->method === HttpMethod::OPTIONS) {
             http_response_code(204);
             exit();
