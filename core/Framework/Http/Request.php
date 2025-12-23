@@ -16,7 +16,7 @@ class Request
     public string $raw;
     public array $body;
     public array $files;
-    public string $origin;
+    public ?string $origin = null;
 
     public function __construct()
     {
@@ -30,6 +30,6 @@ class Request
         $this->raw = file_get_contents('php://input');
         $this->body = json_decode($this->raw) ?? $_POST;
         $this->files = $_FILES;
-        $this->origin = $_SERVER['HTTP_ORIGIN'];
+        $this->origin = $_SERVER['HTTP_ORIGIN'] ?? null;
     }
 }

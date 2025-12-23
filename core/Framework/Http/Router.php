@@ -35,7 +35,7 @@ class Router
         }
 
         foreach ($routes as $route) {
-            $middlewares = empty($route['middlewares']) ? [$middleware] : array_merge([$middleware, $route['middlewares']]); 
+            $middlewares = empty($route['middlewares']) ? [$middleware] : array_merge([$middleware, $route['middlewares']]);
             self::$instance->addRoute(
                 method: $route[0],
                 uri: $route[1],
@@ -138,41 +138,45 @@ class Router
             self::$instance = new Router();
         }
 
-        foreach ($globalMiddlewares as $middleware) {
-            $class = new $middleware;
-            $class->run($request);
-        }
-
         $uri = $request->uri;
         $method = $request->method;
-
         $route = self::$instance->routes[$method->value]['withoutParam'][$uri] ?? null;
+        $routeMiddlewares = $route['middlewares'] ?? [];
+        if ($method !== HttpMethod::OPTIONS) {
+            $params = [];
+            if (!$route && substr_count($uri, '/') > 1 && !empty(self::$instance->routes[$method->value]['withParam'])) {
+                [$route, $params] = self::$instance->searchRouteWithParameter($uri, $method->value);
+            }
 
-        $params = [];
-        if (!$route && substr_count($uri, '/') > 1 && !empty(self::$instance->routes[$method->value]['withParam'])) {
-            [$route, $params] = self::$instance->searchRouteWithParameter($uri, $method->value);
+            if (!$route) {
+                return new HttpResponse(404, ['message' => 'Route not found']);
+            }
+
+            if (!class_exists($route['controller'])) {
+                return new HttpResponse(404, ['message' => 'Controller not found']);
+            }
+
+            $controller = new $route['controller']();
+            $method = $route['methodName'];
+
+            if (!method_exists($controller, $method)) {
+                return new HttpResponse(404, ['message' => 'Controller method not found']);
+            }
         }
 
-        if (!$route) {
-            return new HttpResponse(404, ['message' => 'Route not found']);
-        }
-
-        if (!class_exists($route['controller'])) {
-            return new HttpResponse(404, ['message' => 'Controller not found']);
-        }
-
-        $controller = new $route['controller']();
-        $method = $route['methodName'];
+        $middlewareClasses = [
+            ...$globalMiddlewares ?? [],
+            ...$routeMiddlewares ?? []
+        ];
+        $reversedMiddlewares = array_reverse($middlewareClasses);
         
-        if (!method_exists($controller, $method)) {
-            return new HttpResponse(404, ['message' => 'Controller method not found']);
+        $nextMiddleware = null;
+        foreach ($reversedMiddlewares as $middlewareClass) {
+            $nextMiddleware = new $middlewareClass($nextMiddleware);
         }
 
-        $middlewares = $route['middlewares'];
-
-        foreach ($middlewares as $middleware) {
-            $middlewareClass = new $middleware();
-            $middlewareClass->run($request);
+        if ($nextMiddleware) {
+            $nextMiddleware->run($request);
         }
 
         return !empty($params) ? $controller->$method($request, ...$params) : $controller->$method($request);
