@@ -3,11 +3,14 @@
 namespace Core\Framework\Http;
 
 use Core\Framework\Http\Enums\HttpMethod;
+use Core\Framework\Http\Traits\RunMiddlewares;
 
 # refatorar esse cara assim que possível, está muy gramde
 # passar lógica de singleton para uma classe reutilizável e só fazer router implementar ela
 class Router
 {
+    use RunMiddlewares;
+
     private static ?Router $instance = null;
     public array $routes = [
         'GET' => [
@@ -132,7 +135,7 @@ class Router
         }
     }
 
-    public static function runRoute(Request $request, array $globalMiddlewares): HttpResponse
+    public static function dispatch(Request $request): HttpResponse
     {
         if (!self::$instance) {
             self::$instance = new Router();
@@ -142,42 +145,28 @@ class Router
         $method = $request->method;
         $route = self::$instance->routes[$method->value]['withoutParam'][$uri] ?? null;
         $routeMiddlewares = $route['middlewares'] ?? [];
-        if ($method !== HttpMethod::OPTIONS) {
-            $params = [];
-            if (!$route && substr_count($uri, '/') > 1 && !empty(self::$instance->routes[$method->value]['withParam'])) {
-                [$route, $params] = self::$instance->searchRouteWithParameter($uri, $method->value);
-            }
-
-            if (!$route) {
-                return new HttpResponse(404, ['message' => 'Route not found']);
-            }
-
-            if (!class_exists($route['controller'])) {
-                return new HttpResponse(404, ['message' => 'Controller not found']);
-            }
-
-            $controller = new $route['controller']();
-            $method = $route['methodName'];
-
-            if (!method_exists($controller, $method)) {
-                return new HttpResponse(404, ['message' => 'Controller method not found']);
-            }
+            
+        $params = [];
+        if (!$route && substr_count($uri, '/') > 1 && !empty(self::$instance->routes[$method->value]['withParam'])) {
+            [$route, $params] = self::$instance->searchRouteWithParameter($uri, $method->value);
         }
 
-        $middlewareClasses = [
-            ...$globalMiddlewares ?? [],
-            ...$routeMiddlewares ?? []
-        ];
-        $reversedMiddlewares = array_reverse($middlewareClasses);
-        
-        $nextMiddleware = null;
-        foreach ($reversedMiddlewares as $middlewareClass) {
-            $nextMiddleware = new $middlewareClass($nextMiddleware);
+        if (!$route) {
+            return new HttpResponse(404, ['message' => 'Route not found']);
         }
 
-        if ($nextMiddleware) {
-            $nextMiddleware->run($request);
+        if (!class_exists($route['controller'])) {
+            return new HttpResponse(404, ['message' => 'Controller not found']);
         }
+
+        $controller = new $route['controller']();
+        $method = $route['methodName'];
+
+        if (!method_exists($controller, $method)) {
+            return new HttpResponse(404, ['message' => 'Controller method not found']);
+        }
+
+        self::$instance->runMiddlewares($routeMiddlewares, $request);
 
         return !empty($params) ? $controller->$method($request, ...$params) : $controller->$method($request);
     }
