@@ -2,6 +2,7 @@
 
 namespace Core\Framework\Http;
 
+use Core\Framework\Container;
 use Core\Framework\Http\Enums\HttpMethod;
 use Core\Framework\Http\Traits\RunMiddlewares;
 
@@ -135,7 +136,7 @@ class Router
         }
     }
 
-    public static function dispatch(Request $request): HttpResponse
+    public static function dispatch(Request $request, Container $container): HttpResponse
     {
         if (!self::$instance) {
             self::$instance = new Router();
@@ -159,14 +160,14 @@ class Router
             return new HttpResponse(404, ['message' => 'Controller not found']);
         }
 
-        $controller = new $route['controller']();
+        $controller = $container->make($route['controller']);
         $method = $route['methodName'];
 
         if (!method_exists($controller, $method)) {
             return new HttpResponse(404, ['message' => 'Controller method not found']);
         }
 
-        self::$instance->runMiddlewares($routeMiddlewares, $request);
+        self::$instance->runMiddlewares($routeMiddlewares, $request, $container);
 
         return !empty($params) ? $controller->$method($request, ...$params) : $controller->$method($request);
     }

@@ -9,16 +9,17 @@ class RedisCacheProvider implements CacheProvider, RateLimitProvider
 {
     private Redis $redis;
 
-    public function __construct(
-        string $host,
-        int $port,
-        string $password,
-        int $database,
-        float $timeout = 0.0,
-    ) {
+    public function __construct() 
+    {
         $this->redis = new Redis();
         
         try {
+            $host = getenv('REDIS_HOST');
+            $port= getenv('REDIS_PORT');
+            $password = getenv('REDIS_PASSWORD');
+            $database = getenv('REDIS_DB');
+            $timeout = 0.0;
+
             $this->redis->pconnect($host, $port, $timeout, 'mini_laravel');
             $this->redis->auth($password);
             $this->redis->select($database); 

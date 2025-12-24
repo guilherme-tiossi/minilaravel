@@ -6,7 +6,11 @@ use Core\Framework\Providers\RouteServiceProvider;
 use Core\Application\Http\Exceptions\AppException;
 use Core\Application\Http\Middlewares\HandleCors;
 use Core\Application\Http\Middlewares\RateLimiter;
+use Core\Framework\Container;
 use Core\Framework\Http\Traits\RunMiddlewares;
+use Core\Infrastructure\Cache\CacheProvider;
+use Core\Infrastructure\Cache\RateLimitProvider;
+use Core\Infrastructure\Cache\RedisCacheProvider;
 use Exception;
 
 class Kernel
@@ -18,14 +22,19 @@ class Kernel
         $this->registerProviders();
 
         $globalMiddlewares = [
-            RateLimiter::class,
-            HandleCors::class
+            HandleCors::class,
+            RateLimiter::class
         ];
 
         try {
             $request = new Request();
-            $this->runMiddlewares($globalMiddlewares, $request);
-            return Router::dispatch($request);
+
+            $container = new Container;
+            $this->configureContainer($container);
+
+            $this->runMiddlewares($globalMiddlewares, $request, $container);
+
+            return Router::dispatch($request, $container);
         } catch (AppException $e) {
             return new HttpResponse($e->getCode(), ['message' => $e->getMessage()]);
         } catch (Exception $e) {
@@ -40,5 +49,14 @@ class Kernel
     private function registerProviders(): void
     {
         new RouteServiceProvider()->init();
+    }
+
+    // refatorar isso aqui em algo mais sofisticado
+    private function configureContainer(Container &$container): Container
+    {
+        $container->bind(CacheProvider::class, RedisCacheProvider::class);
+        $container->bind(RateLimitProvider::class, RedisCacheProvider::class);
+
+        return $container;
     }
 }
