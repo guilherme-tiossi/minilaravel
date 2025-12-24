@@ -5,6 +5,7 @@ namespace Core\Framework\Http;
 use Core\Framework\Providers\RouteServiceProvider;
 use Core\Application\Http\Exceptions\AppException;
 use Core\Application\Http\Middlewares\HandleCors;
+use Core\Application\Http\Middlewares\RateLimiter;
 use Core\Framework\Http\Traits\RunMiddlewares;
 use Exception;
 
@@ -17,6 +18,7 @@ class Kernel
         $this->registerProviders();
 
         $globalMiddlewares = [
+            RateLimiter::class,
             HandleCors::class
         ];
 
