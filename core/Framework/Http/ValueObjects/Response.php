@@ -1,8 +1,8 @@
 <?php
 
-namespace Core\Framework\Http;
+namespace Core\Framework\Http\ValueObjects;
 
-class HttpResponse
+class Response
 {
     public function __construct(int $httpCode, array $body)
     {

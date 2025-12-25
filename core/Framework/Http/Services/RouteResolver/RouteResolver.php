@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Framework\Http\Services;
+namespace Core\Framework\Http\Services\RouteResolver;
 
 use Core\Application\Http\Exceptions\AppException;
 

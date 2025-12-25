@@ -4,9 +4,10 @@ namespace Core\Framework\Http;
 use Core\Application\Http\Exceptions\AppException;
 use Core\Application\Http\Middlewares\HandleCors;
 use Core\Application\Http\Middlewares\RateLimiter;
-use Core\Framework\Application;
 use Core\Framework\Container;
 use Core\Framework\Http\Traits\RunMiddlewares;
+use Core\Framework\Http\ValueObjects\Request;
+use Core\Framework\Http\ValueObjects\Response;
 use Exception;
 
 class Kernel
@@ -18,7 +19,7 @@ class Kernel
     ) {
     }
 
-    public function handle(): HttpResponse
+    public function handle(): Response
     {
         $globalMiddlewares = [
             HandleCors::class,
@@ -30,7 +31,7 @@ class Kernel
             $this->runMiddlewares($globalMiddlewares, $request, $this->container);
             return Router::dispatch($request, $this->container);
         } catch (AppException $e) {
-            return new HttpResponse($e->getCode(), ['message' => $e->getMessage()]);
+            return new Response($e->getCode(), ['message' => $e->getMessage()]);
         } catch (Exception $e) {
             $payload = [
                 'message' => 'A server-side error has occured'
@@ -40,7 +41,7 @@ class Kernel
                 $payload['trace'] = $e->getTrace();
             }
 
-            return new HttpResponse(500, $payload);
+            return new Response(500, $payload);
         }
     }
 }

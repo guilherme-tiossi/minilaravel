@@ -2,31 +2,31 @@
 
 namespace Core\Application\Http\Controllers;
 
-use Core\Framework\Http\HttpResponse;
-use Core\Framework\Http\Request;
+use Core\Framework\Http\ValueObjects\Response;
+use Core\Framework\Http\ValueObjects\Request;
 
 // deve eventualmente estender de algum basecontroller
 class MessageController
 {
-    public function run(Request $request): HttpResponse
+    public function run(Request $request): Response
     {
-        return new HttpResponse(httpCode: 200, body: [
+        return new Response(httpCode: 200, body: [
             'message' => 'controller consultado com sucesso',
             'json' => 'hehe!',
             'mensagem recebida de:' => $request->ip
         ]);
     }
 
-    public function show(Request $request, string $uuid): HttpResponse
+    public function show(Request $request, string $uuid): Response
     {
-        return new HttpResponse(httpCode: 200, body: [
+        return new Response(httpCode: 200, body: [
             'message' => $uuid
         ]);
     }
 
-    public function runs(Request $request, string $uuid, string $resourceUuid): HttpResponse
+    public function runs(Request $request, string $uuid, string $resourceUuid): Response
     {
-        return new HttpResponse(httpCode: 200, body: [
+        return new Response(httpCode: 200, body: [
             'message' => [
                 'uuid' => $uuid,
                 'resource' => $resourceUuid

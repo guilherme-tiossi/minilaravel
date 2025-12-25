@@ -2,8 +2,8 @@
 
 namespace Core\Application\Http\Middlewares;
 
-use Core\Framework\Http\HttpResponse;
-use Core\Framework\Http\Request;
+use Core\Framework\Http\ValueObjects\Response;
+use Core\Framework\Http\ValueObjects\Request;
 
 class IpBlacklist implements Middleware
 {
@@ -18,10 +18,10 @@ class IpBlacklist implements Middleware
     ) {
     }
 
-    public function run(Request $request): ?HttpResponse
+    public function run(Request $request): ?Response
     {
         if (in_array($request->ip, $this->bannedIps)) {
-            return new HttpResponse(401, ['message' => 'Blocked IP']);
+            return new Response(401, ['message' => 'Blocked IP']);
         }
 
         if ($this->next) {

@@ -2,8 +2,8 @@
 
 namespace Core\Application\Http\Middlewares;
 
-use Core\Framework\Http\HttpResponse;
-use Core\Framework\Http\Request;
+use Core\Framework\Http\ValueObjects\Response;
+use Core\Framework\Http\ValueObjects\Request;
 use Core\Infrastructure\Cache\RateLimitProvider;
 
 class RateLimiter implements Middleware
@@ -14,7 +14,7 @@ class RateLimiter implements Middleware
     ) {
     }
 
-    public function run(Request $request): ?HttpResponse
+    public function run(Request $request): ?Response
     {
         $this->rateLimitProvider->validateRateLimit($request->ip, 5);
 

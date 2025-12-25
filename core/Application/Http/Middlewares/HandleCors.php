@@ -3,8 +3,8 @@
 namespace Core\Application\Http\Middlewares;
 
 use Core\Framework\Http\Enums\HttpMethod;
-use Core\Framework\Http\HttpResponse;
-use Core\Framework\Http\Request;
+use Core\Framework\Http\ValueObjects\Response;
+use Core\Framework\Http\ValueObjects\Request;
 
 class HandleCors implements Middleware
 {
@@ -19,7 +19,7 @@ class HandleCors implements Middleware
     ) {
     }
 
-    public function run(Request $request): ?HttpResponse
+    public function run(Request $request): ?Response
     {
         if ($request->origin && in_array($request->origin, $this->allowedOrigins, true)) {
             header('Access-Control-Allow-Origin: ' . $request->origin);
@@ -27,7 +27,7 @@ class HandleCors implements Middleware
 
         if ($request->method === HttpMethod::OPTIONS) {        
             header('Access-Control-Allow-Headers: Content-Type, Authorization');
-            return new HttpResponse(204, []);
+            return new Response(204, []);
         }
 
         if ($this->next) {

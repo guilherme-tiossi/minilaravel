@@ -4,12 +4,13 @@ namespace Core\Framework\Http;
 
 use Core\Framework\Container;
 use Core\Framework\Http\Enums\HttpMethod;
-use Core\Framework\Http\Services\RouteResolver;
-use Core\Framework\Http\Services\InputDto as RouteResolverInputDto;
+use Core\Framework\Http\Services\RouteResolver\RouteResolver;
+use Core\Framework\Http\Services\RouteResolver\InputDto as RouteResolverInputDto;
 use Core\Framework\Http\Traits\RunMiddlewares;
+use Core\Framework\Http\ValueObjects\Request;
+use Core\Framework\Http\ValueObjects\Response;
 
-# refatorar esse cara assim que possível, está muy gramde
-# passar lógica de singleton para uma classe reutilizável e só fazer router implementar ela
+# TRANSFORMAR ROUTE EM UM VALUE OBJECT/CLASSE E ROUTECOLLECTION EM OUTRA
 class Router
 {
     use RunMiddlewares;
@@ -115,7 +116,7 @@ class Router
         }
     }
 
-    public static function dispatch(Request $request, Container $container): HttpResponse
+    public static function dispatch(Request $request, Container $container): Response
     {
         if (!self::$instance) {
             self::$instance = new Router();

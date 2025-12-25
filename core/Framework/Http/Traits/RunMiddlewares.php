@@ -3,7 +3,7 @@
 namespace Core\Framework\Http\Traits;
 
 use Core\Framework\Container;
-use Core\Framework\Http\Request;
+use Core\Framework\Http\ValueObjects\Request;
 
 trait RunMiddlewares
 {

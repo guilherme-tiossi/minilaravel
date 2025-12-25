@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Framework\Http;
+namespace Core\Framework\Http\ValueObjects;
 
 use Core\Framework\Http\Enums\HttpMethod;
 
