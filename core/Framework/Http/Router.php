@@ -9,8 +9,8 @@ use Core\Framework\Http\Services\RouteResolver\InputDto as RouteResolverInputDto
 use Core\Framework\Http\Traits\RunMiddlewares;
 use Core\Framework\Http\ValueObjects\Request;
 use Core\Framework\Http\ValueObjects\Response;
+use Core\Framework\Http\ValueObjects\Route;
 
-# TRANSFORMAR ROUTE EM UM VALUE OBJECT/CLASSE E ROUTECOLLECTION EM OUTRA
 class Router
 {
     use RunMiddlewares;
@@ -44,58 +44,13 @@ class Router
         foreach ($routes as $route) {
             $middlewares = empty($route['middlewares']) ? [$middleware] : array_merge([$middleware, $route['middlewares']]);
             self::$instance->addRoute(
-                method: $route[0],
+                httpMethod: $route[0],
                 uri: $route[1],
                 controller: $route[2],
-                methodName: $route[3],
+                method: $route[3],
                 middlewares: $middlewares
             );
         }
-    }
-
-    public static function get(string $uri, string $controller, string $methodName, ?array $middlewares = null): void
-    {
-        if (!self::$instance) {
-            self::$instance = new Router();
-        }
-
-        self::$instance->addRoute(HttpMethod::GET, $uri, $controller, $methodName, $middlewares);
-    }
-
-    public static function post(string $uri, string $controller, string $methodName, ?array $middlewares = null): void
-    {
-        if (!self::$instance) {
-            self::$instance = new Router();
-        }
-
-        self::$instance->addRoute(HttpMethod::POST, $uri, $controller, $methodName, $middlewares);
-    }
-
-    public static function patch(string $uri, string $controller, string $methodName, ?array $middlewares = null): void
-    {
-        if (!self::$instance) {
-            self::$instance = new Router();
-        }
-
-        self::$instance->addRoute(HttpMethod::PATCH, $uri, $controller, $methodName, $middlewares);
-    }
-
-    public static function put(string $uri, string $controller, string $methodName, ?array $middlewares = null): void
-    {
-        if (!self::$instance) {
-            self::$instance = new Router();
-        }
-
-        self::$instance->addRoute(HttpMethod::PUT, $uri, $controller, $methodName, $middlewares);
-    }
-
-    public static function delete(string $uri, string $controller, string $methodName, ?array $middlewares = null): void
-    {
-        if (!self::$instance) {
-            self::$instance = new Router();
-        }
-
-        self::$instance->addRoute(HttpMethod::DELETE, $uri, $controller, $methodName, $middlewares);
     }
 
     public static function routes(): void
@@ -109,7 +64,7 @@ class Router
                 if (!$routes) continue;
                 foreach ($routes as $route => $routeData) {
                     $controller = substr($routeData['controller'], strrpos($routeData['controller'], "\\") + 1);
-                    $method = $routeData['methodName'];
+                    $method = $routeData['method'];
                     echo $httpMethod . ' - ' . $route . ' - ' . $controller . '::' . $method . "() \n";
                 }
             }
@@ -123,12 +78,12 @@ class Router
         }
 
         $uri = $request->uri;
-        $method = $request->method;
+        $httpMethod = $request->method;
 
         $routeResolver = new RouteResolver();
         $resolvedRoute = $routeResolver->resolve(new RouteResolverInputDto(
             container: $container,
-            method: $method,
+            httpMethod: $httpMethod,
             uri: $uri,
             routes: self::$instance->routes
         ));
@@ -142,26 +97,30 @@ class Router
         return !empty($params) ? $controller->$method($request, ...$params) : $controller->$method($request);
     }
 
-    private function addRoute(HttpMethod $method, string $uri, string $controller, string $methodName, ?array $middlewares = null): void
+    public static function addRoute(HttpMethod $httpMethod, string $uri, string $controller, string $method, ?array $middlewares = null): void
     {
+        if (!self::$instance) {
+            self::$instance = new Router();
+        }
+
+        $routeObject = new Route(
+            httpMethod: $httpMethod,
+            uri: $uri,
+            controller: $controller,
+            method: $method,
+            middlewares: $middlewares
+        );
+
         if (preg_match_all('/\{([^}]+)\}/', $uri, $matches)) {
             $params = [];
             foreach ($matches[1] as $match) {
                 $params[] = $match;
             }
 
-            $this->routes[$method->value]['withParam'][$uri] = [
-                'controller' => $controller,
-                'methodName' => $methodName,
-                'params' => $params,
-                'middlewares' => $middlewares
-            ];
+            $routeObject->params = $params;
+            self::$instance->routes[$httpMethod->value]['withParam'][$uri] = $routeObject;
         } else {
-            $this->routes[$method->value]['withoutParam'][$uri] = [
-                'controller' => $controller,
-                'methodName' => $methodName,
-                'middlewares' => $middlewares
-            ];
+            self::$instance->routes[$httpMethod->value]['withoutParam'][$uri] = $routeObject;
         }
     }
 }

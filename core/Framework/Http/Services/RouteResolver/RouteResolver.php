@@ -8,27 +8,27 @@ class RouteResolver
 {
     public function resolve(InputDto $input): OutputDto
     {
-        $method = $input->method;
+        $httpMethod = $input->httpMethod;
         $uri = $input->uri;
 
-        $route = $input->routes[$method->value]['withoutParam'][$uri] ?? null;
+        $route = $input->routes[$httpMethod->value]['withoutParam'][$uri] ?? null;
 
         $params = [];
-        if (!$route && substr_count($input->uri, '/') > 1 && !empty($input->routes[$method->value]['withParam'])) {
-            [$route, $params] = self::searchRouteWithParameter($uri, $method->value, $input->routes);
+        if (!$route && substr_count($input->uri, '/') > 1 && !empty($input->routes[$httpMethod->value]['withParam'])) {
+            [$route, $params] = self::searchRouteWithParameter($uri, $httpMethod->value, $input->routes);
         }
-        $routeMiddlewares = $route['middlewares'] ?? [];
+        $routeMiddlewares = $route->middlewares ?? [];
 
         if (!$route) {
             throw new AppException(404, 'Route not found');
         }
 
-        if (!class_exists($route['controller'])) {
+        if (!class_exists($route->controller)) {
             throw new AppException(404, 'Controller not found');
         }
 
-        $controller = $input->container->make($route['controller']);
-        $method = $route['methodName'];
+        $controller = $input->container->make($route->controller);
+        $method = $route->method;
 
         if (!method_exists($controller, $method)) {
             throw new AppException(404, 'Controller method not found');

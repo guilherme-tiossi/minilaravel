@@ -9,7 +9,7 @@ class InputDto
 {
     public function __construct(
         public Container $container,
-        public HttpMethod $method,
+        public HttpMethod $httpMethod,
         public string $uri,
         public array $routes
     ) {
