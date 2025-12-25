@@ -3,7 +3,6 @@
 namespace Core\Application\Http\Middlewares;
 
 use Core\Framework\Http\HttpResponse;
-use Core\Framework\Http\Middleware;
 use Core\Framework\Http\Request;
 use Core\Infrastructure\Cache\RateLimitProvider;
 

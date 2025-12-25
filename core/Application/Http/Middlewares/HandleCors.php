@@ -4,7 +4,6 @@ namespace Core\Application\Http\Middlewares;
 
 use Core\Framework\Http\Enums\HttpMethod;
 use Core\Framework\Http\HttpResponse;
-use Core\Framework\Http\Middleware;
 use Core\Framework\Http\Request;
 
 class HandleCors implements Middleware

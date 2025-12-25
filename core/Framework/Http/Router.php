@@ -4,6 +4,8 @@ namespace Core\Framework\Http;
 
 use Core\Framework\Container;
 use Core\Framework\Http\Enums\HttpMethod;
+use Core\Framework\Http\Services\RouteResolver;
+use Core\Framework\Http\Services\InputDto as RouteResolverInputDto;
 use Core\Framework\Http\Traits\RunMiddlewares;
 
 # refatorar esse cara assim que possível, está muy gramde
@@ -95,29 +97,6 @@ class Router
         self::$instance->addRoute(HttpMethod::DELETE, $uri, $controller, $methodName, $middlewares);
     }
 
-    private function addRoute(HttpMethod $method, string $uri, string $controller, string $methodName, ?array $middlewares = null): void
-    {
-        if (preg_match_all('/\{([^}]+)\}/', $uri, $matches)) {
-            $params = [];
-            foreach ($matches[1] as $match) {
-                $params[] = $match;
-            }
-
-            $this->routes[$method->value]['withParam'][$uri] = [
-                'controller' => $controller,
-                'methodName' => $methodName,
-                'params' => $params,
-                'middlewares' => $middlewares
-            ];
-        } else {
-            $this->routes[$method->value]['withoutParam'][$uri] = [
-                'controller' => $controller,
-                'methodName' => $methodName,
-                'middlewares' => $middlewares
-            ];
-        }
-    }
-
     public static function routes(): void
     {
         if (!self::$instance) {
@@ -144,63 +123,44 @@ class Router
 
         $uri = $request->uri;
         $method = $request->method;
-        $route = self::$instance->routes[$method->value]['withoutParam'][$uri] ?? null;
-        $routeMiddlewares = $route['middlewares'] ?? [];
-            
-        $params = [];
-        if (!$route && substr_count($uri, '/') > 1 && !empty(self::$instance->routes[$method->value]['withParam'])) {
-            [$route, $params] = self::$instance->searchRouteWithParameter($uri, $method->value);
-        }
 
-        if (!$route) {
-            return new HttpResponse(404, ['message' => 'Route not found']);
-        }
+        $routeResolver = new RouteResolver();
+        $resolvedRoute = $routeResolver->resolve(new RouteResolverInputDto(
+            container: $container,
+            method: $method,
+            uri: $uri,
+            routes: self::$instance->routes
+        ));
 
-        if (!class_exists($route['controller'])) {
-            return new HttpResponse(404, ['message' => 'Controller not found']);
-        }
+        $controller = $resolvedRoute->controller;
+        $method = $resolvedRoute->method;
+        $params = $resolvedRoute->params;
+        $middlewares = $resolvedRoute->middlewares;
 
-        $controller = $container->make($route['controller']);
-        $method = $route['methodName'];
-
-        if (!method_exists($controller, $method)) {
-            return new HttpResponse(404, ['message' => 'Controller method not found']);
-        }
-
-        self::$instance->runMiddlewares($routeMiddlewares, $request, $container);
-
+        self::$instance->runMiddlewares($middlewares, $request, $container);
         return !empty($params) ? $controller->$method($request, ...$params) : $controller->$method($request);
     }
 
-    private function searchRouteWithParameter(string $uri, string $method): ?array
+    private function addRoute(HttpMethod $method, string $uri, string $controller, string $methodName, ?array $middlewares = null): void
     {
-        $requestedUriArray = explode('/', substr($uri, 1));
-        foreach ($this->routes[$method]['withParam'] as $definedRoute => $data) {
-            if (!str_contains($definedRoute, $requestedUriArray[0])) {
-                continue;
-            }
-
-            $definedRouteArray = explode('/', substr($definedRoute, 1));
-            
-            if (count($definedRouteArray) !== count($requestedUriArray)) {
-                continue;
-            }
-
+        if (preg_match_all('/\{([^}]+)\}/', $uri, $matches)) {
             $params = [];
-            foreach ($definedRouteArray as $position => $routeString) {
-                if ($this->isParameter($routeString)) {
-                    $params[] = $requestedUriArray[$position];
-                }
+            foreach ($matches[1] as $match) {
+                $params[] = $match;
             }
 
-            return [$this->routes[$method]['withParam'][$definedRoute], $params];
+            $this->routes[$method->value]['withParam'][$uri] = [
+                'controller' => $controller,
+                'methodName' => $methodName,
+                'params' => $params,
+                'middlewares' => $middlewares
+            ];
+        } else {
+            $this->routes[$method->value]['withoutParam'][$uri] = [
+                'controller' => $controller,
+                'methodName' => $methodName,
+                'middlewares' => $middlewares
+            ];
         }
-
-        return null;
-    }
-
-    private function isParameter(string $string): bool
-    {
-        return preg_match_all('/\{([^}]+)\}/', $string);
     }
 }
