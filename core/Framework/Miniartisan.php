@@ -7,7 +7,7 @@ require __DIR__ . '/helpers.php';
 use Core\Framework\Http\Router;
 use Core\Framework\Providers\RouteServiceProvider;
 
-class App 
+class Miniartisan 
 {
     public function run(): void
     {
