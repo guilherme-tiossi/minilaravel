@@ -4,7 +4,7 @@ namespace Core\Framework\Http;
 use Core\Application\Http\Exceptions\AppException;
 use Core\Application\Http\Middlewares\HandleCors;
 use Core\Application\Http\Middlewares\RateLimiter;
-use Core\Framework\Container;
+use Core\Framework\Root\Container;
 use Core\Framework\Http\Traits\RunMiddlewares;
 use Core\Framework\Http\ValueObjects\Request;
 use Core\Framework\Http\ValueObjects\Response;

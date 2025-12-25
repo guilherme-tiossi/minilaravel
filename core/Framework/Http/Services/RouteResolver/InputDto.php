@@ -2,7 +2,7 @@
 
 namespace Core\Framework\Http\Services\RouteResolver;
 
-use Core\Framework\Container;
+use Core\Framework\Root\Container;
 use Core\Framework\Http\Enums\HttpMethod;
 
 class InputDto

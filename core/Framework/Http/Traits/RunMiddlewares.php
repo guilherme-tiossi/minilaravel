@@ -2,12 +2,11 @@
 
 namespace Core\Framework\Http\Traits;
 
-use Core\Framework\Container;
+use Core\Framework\Root\Container;
 use Core\Framework\Http\ValueObjects\Request;
 
 trait RunMiddlewares
 {
-    // usar um DTO aqui
     public function runMiddlewares(array $middlewareClasses, Request $request, Container $container): void
     {
         $reversedMiddlewares = array_reverse($middlewareClasses);

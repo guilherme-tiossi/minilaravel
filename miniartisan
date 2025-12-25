@@ -2,7 +2,7 @@
 
 require __DIR__ . '/vendor/autoload.php';
 
-use Core\Framework\Miniartisan;
+use Core\Framework\Root\Miniartisan;
 
 $app = new Miniartisan();
 

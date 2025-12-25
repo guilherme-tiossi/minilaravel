@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Framework;
+namespace Core\Framework\Root;
 
 require __DIR__ . '/helpers.php';
 

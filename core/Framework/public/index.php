@@ -1,10 +1,10 @@
 <?php
 
 require __DIR__ . '/../../../vendor/autoload.php';
-require __DIR__ . '/../helpers.php';
+require __DIR__ . '/helpers.php';
 
-use Core\Framework\Application;
-use Core\Framework\Container;
+use Core\Framework\Root\Application;
+use Core\Framework\Root\Container;
 use Core\Framework\Http\Kernel;
 
 $container = new Container();

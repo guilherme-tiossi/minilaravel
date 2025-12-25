@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Framework;
+namespace Core\Framework\Root;
 
 use ReflectionClass;
 
