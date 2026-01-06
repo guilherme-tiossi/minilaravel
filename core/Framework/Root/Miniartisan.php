@@ -2,7 +2,7 @@
 
 namespace Core\Framework\Root;
 
-require __DIR__ . '/helpers.php';
+require __DIR__ . '/../public/helpers.php';
 
 use Core\Framework\Http\Router;
 use Core\Framework\Providers\RouteServiceProvider;
@@ -13,7 +13,7 @@ class Miniartisan
     {
         $host = "0.0.0.0";
         $port = "8080";
-        $docroot = __DIR__ . "/public";
+        $docroot = __DIR__ . "/../public";
 
         echo "Starting server at http://{$host}:{$port}\n";
         echo "Serving from: {$docroot}\n";
