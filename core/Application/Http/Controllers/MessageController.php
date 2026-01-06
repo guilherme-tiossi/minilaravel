@@ -2,12 +2,18 @@
 
 namespace Core\Application\Http\Controllers;
 
+use Core\Application\Model\User;
 use Core\Framework\Http\ValueObjects\Response;
 use Core\Framework\Http\ValueObjects\Request;
 
 // deve eventualmente estender de algum basecontroller
 class MessageController
 {
+    public function __construct(
+        private User $userModel
+    ) {
+    }
+
     public function run(Request $request): Response
     {
         return new Response(httpCode: 200, body: [
