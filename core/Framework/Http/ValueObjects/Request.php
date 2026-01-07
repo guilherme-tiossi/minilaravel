@@ -28,7 +28,7 @@ class Request
         $this->ip = $_SERVER['REMOTE_ADDR'];
         $this->cookies = $_COOKIE;
         $this->raw = file_get_contents('php://input');
-        $this->body = json_decode($this->raw) ?? $_POST;
+        $this->body = (array) json_decode($this->raw) ?? $_POST;
         $this->files = $_FILES;
         $this->origin = $_SERVER['HTTP_ORIGIN'] ?? null;
     }

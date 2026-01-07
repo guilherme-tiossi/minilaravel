@@ -31,4 +31,12 @@ class PdoDatabaseProvider implements DatabaseProvider
         $stmt = $this->conn->prepare($query);
         $stmt->execute($params);
     }
+
+    public function fetchAll(string $query, array $params = []): array
+    {
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute($params);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

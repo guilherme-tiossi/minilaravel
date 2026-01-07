@@ -13,6 +13,59 @@ class Model
     ) {
     }
 
+    // fazer transactions
+
+    public function get(array $filters = []): array
+    {
+        $where = '';
+        $params = [];
+    
+        if (!empty($filters)) {
+            $conditions = [];
+        
+            foreach ($filters as $column => $value) {
+                $conditions[] = sprintf('%s = :%s', $column, $column);
+                $params[$column] = $value;
+            }
+        
+            $where = 'WHERE ' . implode(' AND ', $conditions);
+        }
+    
+        $sql = sprintf(
+            'SELECT * FROM %s %s',
+            $this->table,
+            $where
+        );
+    
+        return $this->databaseProvider->fetchAll($sql, $params);
+    }
+
+    public function findBy(array $filters = []): array
+    {
+        $where = '';
+        $params = [];
+    
+        if (!empty($filters)) {
+            $conditions = [];
+        
+            foreach ($filters as $column => $value) {
+                $conditions[] = sprintf('%s = :%s', $column, $column);
+                $params[$column] = $value;
+            }
+        
+            $where = 'WHERE ' . implode(' AND ', $conditions);
+        }
+    
+        $sql = sprintf(
+            'SELECT * FROM %s %s LIMIT 1',
+            $this->table,
+            $where
+        );
+    
+        return $this->databaseProvider->fetchAll($sql, $params);
+    }
+
+
     // começar a retornar dados no futuro (boolean)
     public function create(array $data): void
     {
