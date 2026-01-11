@@ -42,5 +42,20 @@ class MysqlDatabaseProvider implements DatabaseProvider
     public function getLastInsertedId(): int
     {
         return (int) $this->conn->lastInsertId();
-    }    
+    }
+
+    public function initTransaction(): void
+    {
+        $this->conn->beginTransaction();
+    }
+
+    public function commitTransaction(): void
+    {
+        $this->conn->commit();
+    }
+
+    public function rollbackTransaction(): void
+    {
+        $this->conn->rollBack();
+    }
 }
