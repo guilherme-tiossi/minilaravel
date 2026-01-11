@@ -26,8 +26,27 @@ class UserController
 
     public function create(Request $request): Response
     {
-        // adicionar alguma forma de validação
-        // retornar algo de fato
+        $request->validate([
+            'name' => [
+                'required' => true,
+                'type' => 'string',
+                'min' => 5,
+                'max' => 255
+            ],
+            'email' => [
+                'required' => true,
+                'type' => 'string',
+                'min' => 5,
+                'max' => 255
+            ],
+            'password' => [
+                'required' => true,
+                'type' => 'string',
+                'min' => 16,
+                'max' => 64
+            ]
+        ]);
+
         $user = $this->userModel->create([
             'name' => $request->body['name'],
             'email' => $request->body['email'],
@@ -54,8 +73,21 @@ class UserController
 
     public function update(Request $request, string $id): Response
     {
-        // adicionar alguma forma de validação
-        // retornar algo de fato
+        $request->validate([
+            'name' => [
+                'required' => true,
+                'type' => 'string',
+                'min' => 5,
+                'max' => 255
+            ],
+            'email' => [
+                'required' => true,
+                'type' => 'string',
+                'min' => 5,
+                'max' => 255
+            ]
+        ]);
+
         $user = $this->userModel->update([
             'id' => $id
         ], [
@@ -72,7 +104,6 @@ class UserController
 
     public function delete(Request $request, string $id): Response
     {
-        // achar antes de deletar
         $this->userModel->delete([
             'id' => $id
         ]);
