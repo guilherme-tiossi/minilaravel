@@ -1,7 +1,7 @@
 <?php
 
 namespace Core\Framework\Http;
-use Core\Application\Http\Exceptions\AppException;
+use Core\Shared\Exceptions\AppException;
 use Core\Application\Http\Middlewares\HandleCors;
 use Core\Application\Http\Middlewares\RateLimiter;
 use Core\Framework\Root\Container;

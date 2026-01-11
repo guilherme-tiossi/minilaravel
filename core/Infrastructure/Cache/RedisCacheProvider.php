@@ -1,7 +1,7 @@
 <?php
 namespace Core\Infrastructure\Cache;
 
-use Core\Application\Http\Exceptions\AppException;
+use Core\Shared\Exceptions\AppException;
 use Redis;
 use RedisException;
 

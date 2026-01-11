@@ -2,7 +2,7 @@
 
 namespace Core\Framework\Http\Services\RouteResolver;
 
-use Core\Application\Http\Exceptions\AppException;
+use Core\Shared\Exceptions\AppException;
 
 class RouteResolver
 {

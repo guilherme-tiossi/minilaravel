@@ -2,7 +2,7 @@
 
 namespace Core\Infrastructure\Database;
 
-use Core\Application\Http\Exceptions\AppException;
+use Core\Shared\Exceptions\AppException;
 use PDO;
 use PDOException;
 
