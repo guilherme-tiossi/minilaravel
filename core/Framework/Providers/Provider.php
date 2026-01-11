@@ -2,7 +2,9 @@
 
 namespace Core\Framework\Providers;
 
+use Core\Framework\Root\Container;
+
 interface Provider
 {
-    public function init(): void;
+    public function register(Container &$container): void;
 }

@@ -2,14 +2,17 @@
 
 namespace Core\Application\Http\Controllers;
 
+use Core\Application\Event\UserCreated;
 use Core\Application\Model\User;
+use Core\Framework\Event\EventDispatcher\EventDispatcher;
 use Core\Framework\Http\ValueObjects\Response;
 use Core\Framework\Http\ValueObjects\Request;
 
 class UserController
 {
     public function __construct(
-        private User $userModel
+        private User $userModel,
+        private EventDispatcher $eventDispatcher
     ) {
     }
 
@@ -41,7 +44,7 @@ class UserController
             'password' => [
                 'required' => true,
                 'type' => 'string',
-                'min' => 16,
+                'min' => 10,
                 'max' => 64
             ]
         ]);
@@ -51,6 +54,8 @@ class UserController
             'email' => $request->body['email'],
             'password' => $request->body['password']
         ]);
+
+        $this->eventDispatcher->dispatch(new UserCreated($user['id']));
 
         return new Response(httpCode: 201, body: [
             'message' => 'user created successfully',

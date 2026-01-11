@@ -2,6 +2,7 @@
 
 namespace Core\Framework\Root;
 
+use Core\Framework\Providers\EventServiceProvider;
 use Core\Framework\Providers\RouteServiceProvider;
 use Core\Infrastructure\Cache\CacheProvider;
 use Core\Infrastructure\Cache\RateLimitProvider;
@@ -23,11 +24,7 @@ class Application
         $this->container->bind(RateLimitProvider::class, RedisCacheProvider::class);
         $this->container->bind(DatabaseProvider::class, MysqlDatabaseProvider::class);
 
-        $this->registerProviders();
-    }
-
-    private function registerProviders(): void
-    {
-        new RouteServiceProvider()->init();
+        new RouteServiceProvider()->register($this->container);
+        new EventServiceProvider()->register($this->container);
     }
 }
