@@ -63,8 +63,8 @@ class Router
             foreach ($paramDefinitions as $routes) {
                 if (!$routes) continue;
                 foreach ($routes as $route => $routeData) {
-                    $controller = substr($routeData['controller'], strrpos($routeData['controller'], "\\") + 1);
-                    $method = $routeData['method'];
+                    $controller = substr($routeData->controller, strrpos($routeData->controller, "\\") + 1);
+                    $method = $routeData->method;
                     echo $httpMethod . ' - ' . $route . ' - ' . $controller . '::' . $method . "() \n";
                 }
             }

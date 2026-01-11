@@ -15,7 +15,7 @@ class EventServiceProvider implements Provider
         ]
     ]; 
 
-   public function register(Container &$container): void
+    public function register(?Container &$container = null): void
     {
         $container->bind(EventDispatcher::class, function () use ($container) {
             $listeners = [];

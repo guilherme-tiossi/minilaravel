@@ -6,6 +6,7 @@ require __DIR__ . '/../public/helpers.php';
 
 use Core\Framework\Http\Router;
 use Core\Framework\Providers\RouteServiceProvider;
+use Core\Framework\Queue\QueueWorker;
 
 class Miniartisan 
 {
@@ -33,10 +34,17 @@ class Miniartisan
 
     public function routes(): void
     {
-        new RouteServiceProvider()->init();
+        new RouteServiceProvider()->register();
         echo "List of routes:\n";
         Router::routes();
         exit();
+    }
+
+    public function queue(string $queueName): void
+    {
+        $container = new Container();
+        $worker = $container->make(QueueWorker::class);
+        $worker->work($queueName);
     }
 
     public function error(): void
