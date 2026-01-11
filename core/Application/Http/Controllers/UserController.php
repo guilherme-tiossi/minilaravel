@@ -10,6 +10,12 @@ use Core\Framework\Http\ValueObjects\Request;
 
 class UserController
 {
+    // this controller had a lot of logic in it, ideally all of this would be
+    // inside of usecases and services - however, the intention of this project
+    // is to build the backend framework tools that allow future developers to build
+    // better code. this is just an example of a possible implementation of the tools
+    // built in this repo
+
     public function __construct(
         private User $userModel,
         private EventDispatcher $eventDispatcher
@@ -55,7 +61,7 @@ class UserController
             'password' => $request->body['password']
         ]);
 
-        $this->eventDispatcher->dispatch(new UserCreated($user['id']));
+        $this->eventDispatcher->dispatch(new UserCreated(userId: $user['id']));
 
         return new Response(httpCode: 201, body: [
             'message' => 'user created successfully',

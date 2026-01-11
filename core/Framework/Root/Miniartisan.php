@@ -43,8 +43,9 @@ class Miniartisan
     public function queue(string $queueName): void
     {
         $container = new Container();
+        new Application($container);
         $worker = $container->make(QueueWorker::class);
-        $worker->work($queueName);
+        $worker->work($queueName, $container);
     }
 
     public function error(): void

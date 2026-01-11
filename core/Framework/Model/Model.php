@@ -24,8 +24,12 @@ class Model
             $conditions = [];
         
             foreach ($filters as $column => $value) {
-                $conditions[] = sprintf('%s = :%s', $column, $column);
-                $params[$column] = $value;
+                if (is_null($value)) {
+                    $conditions[] = sprintf('%s IS NULL', $column);
+                } else {
+                    $conditions[] = sprintf('%s = :%s', $column, $column);
+                    $params[$column] = $value;
+                }
             }
         
             $where = 'WHERE ' . implode(' AND ', $conditions);
@@ -115,6 +119,31 @@ class Model
         $result = $this->databaseProvider->fetchAll($sql, $params);
 
         return $result ? $result[0] : [];
+    }
+
+    public function updateBatch(array $ids, array $data): void
+    {
+        $formattedData = '';
+        foreach ($data as $column => $value) {
+            $formattedData .= ", $column = :$column";
+        }
+        $formattedData = substr($formattedData, 2);
+
+        $idPlaceholders = [];
+        foreach ($ids as $index => $id) {
+            $placeholder = ":id_$index";
+            $idPlaceholders[] = $placeholder;
+            $data["id_$index"] = $id;
+        }
+
+        $sql = sprintf(
+            'UPDATE %s SET %s WHERE id IN (%s)',
+            $this->table,
+            $formattedData,
+            implode(', ', $idPlaceholders)
+        );
+
+        $this->databaseProvider->execute($sql, $data);
     }
 
     public function delete(array $filters): void

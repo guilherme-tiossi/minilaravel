@@ -4,6 +4,7 @@ namespace Core\Framework\Providers;
 
 use Core\Application\Event\UserCreated;
 use Core\Application\Listener\SendAccountConfirmationEmail;
+use Core\Application\Model\Job;
 use Core\Framework\Event\EventDispatcher\EventDispatcher;
 use Core\Framework\Root\Container;
 
@@ -26,7 +27,7 @@ class EventServiceProvider implements Provider
                 }
             }
             
-            return new EventDispatcher($listeners);
+            return new EventDispatcher($listeners, $container->make(Job::class));
         });
     }
 }

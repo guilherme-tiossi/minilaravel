@@ -17,6 +17,8 @@ switch ($argv[1]) {
         $app->help();
     case 'routes':
         $app->routes();
+    case 'queue:work':
+        $app->queue($argv[2]);
     default:
         $app->error($argv[1]);
 }

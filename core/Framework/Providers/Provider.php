@@ -6,5 +6,5 @@ use Core\Framework\Root\Container;
 
 interface Provider
 {
-    public function register(Container &$container): void;
+    public function register(?Container &$container = null): void;
 }

@@ -8,6 +8,9 @@ use Throwable;
 
 class SendAccountConfirmationEmail
 {
+    public $queue = 'teste';
+    public $maxTries = 9;
+
     public function __construct(
         private User $userModel
     ) {
