@@ -4,6 +4,7 @@ namespace Core\Framework\Model;
 
 use Core\Infrastructure\Database\DatabaseProvider;
 
+// PASSAR PARA 'mysql model'
 class Model
 {
     protected string $table;
@@ -40,6 +41,30 @@ class Model
         return $this->databaseProvider->fetchAll($sql, $params);
     }
 
+    public function create(array $data): array
+    {
+        $columns = [];
+        $values = [];
+
+        foreach ($data as $column => $value) {
+            $columns[] = $column;
+            $values[] = ':' . $column;
+        }
+
+        $sql = sprintf(
+            'INSERT INTO %s (%s) VALUES (%s)',
+            $this->table,
+            implode(', ', $columns),
+            implode(', ', $values)
+        );
+
+        $this->databaseProvider->execute($sql, $data);
+
+        $modelId = $this->databaseProvider->getLastInsertedId();
+
+        return $this->findBy(['id' => $modelId]);
+    }
+
     public function findBy(array $filters = []): array
     {
         $where = '';
@@ -65,29 +90,7 @@ class Model
         return $this->databaseProvider->fetchAll($sql, $params);
     }
 
-
-    // começar a retornar dados no futuro (boolean)
-    public function create(array $data): void
-    {
-        $columns = [];
-        $values = [];
-
-        foreach ($data as $column => $value) {
-            $columns[] = $column;
-            $values[] = ':' . $column;
-        }
-
-        $sql = sprintf(
-            'INSERT INTO %s (%s) VALUES (%s)',
-            $this->table,
-            implode(', ', $columns),
-            implode(', ', $values)
-        );
-
-        $this->databaseProvider->execute($sql, $data);
-    }
-
-    public function update(array $filters, array $data): void
+    public function update(array $filters, array $data): array
     {
         $formattedFilters = '';
         foreach ($filters as $column => $value) {
@@ -109,6 +112,8 @@ class Model
         );
 
         $this->databaseProvider->execute($sql, $data);
+
+        return $this->findBy($filters);
     }
 
     public function delete(array $filters): void

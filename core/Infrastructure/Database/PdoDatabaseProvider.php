@@ -25,7 +25,6 @@ class PdoDatabaseProvider implements DatabaseProvider
         }
     }
 
-    // retornar bool no futuro
     public function execute(string $query, array $params = []): void
     {
         $stmt = $this->conn->prepare($query);
@@ -39,4 +38,9 @@ class PdoDatabaseProvider implements DatabaseProvider
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getLastInsertedId(): int
+    {
+        return (int) $this->conn->lastInsertId();
+    }    
 }
