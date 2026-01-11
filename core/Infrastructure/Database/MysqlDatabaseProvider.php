@@ -6,7 +6,7 @@ use Core\Shared\Exceptions\AppException;
 use PDO;
 use PDOException;
 
-class PdoDatabaseProvider implements DatabaseProvider
+class MysqlDatabaseProvider implements DatabaseProvider
 {
     private PDO $conn;
 
