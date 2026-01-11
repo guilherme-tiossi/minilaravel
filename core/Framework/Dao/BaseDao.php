@@ -13,7 +13,7 @@ class BaseDao
     ) {
     }
 
-    public function get(array $filters = []): array
+    public function get(array $filters = [], ?array $configs = []): array
     {
         $where = '';
         $params = [];
@@ -38,6 +38,18 @@ class BaseDao
             $this->table,
             $where
         );
+
+        if (isset($configs['order'])) {
+            $sql .= ' ORDER BY ' . $configs['order']['column'] . ' ' . $configs['order']['orientation'];
+        }
+
+        if (isset($configs['limit'])) {
+            $sql .= ' LIMIT ' . $configs['limit'];
+        }
+
+        if (isset($configs['for_update']) && $configs['for_update']) {
+            $sql .= ' FOR UPDATE';
+        }
     
         return $this->databaseProvider->fetchAll($sql, $params);
     }
@@ -63,6 +75,7 @@ class BaseDao
 
         $DaoId = $this->databaseProvider->getLastInsertedId();
 
+        // alterar esse cara aqui pq update pode retornar vários
         return $this->findBy(['id' => $DaoId]);
     }
 

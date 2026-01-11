@@ -6,6 +6,7 @@ use Throwable;
 use Core\Application\Dao\JobDao;
 use Core\Framework\Root\Container;
 use Core\Infrastructure\Database\DatabaseProvider;
+use Exception;
 
 class QueueWorker
 {
@@ -18,12 +19,24 @@ class QueueWorker
     // mudar, container não pode ser usado aqui
     public function work(string $queueName, Container $container)
     {
+        echo "running jobs from $queueName :D \n";
+        echo "worker:" . getmypid() . "\n";
+
         while (true) {
             $this->databaseProvider->initTransaction();
+
+            // mudar para suportar um optionsDto
             $jobs = $this->jobDao->get([
                 'queue' => $queueName,
                 'status' => 'pending',
                 'worker' => null
+            ], [
+                'limit' => 4,
+                'for_update' => true,
+                'order' => [
+                    'column' => 'id',
+                    'orientation' => 'asc'
+                ]
             ]);
 
             if (empty($jobs)) {
@@ -31,15 +44,17 @@ class QueueWorker
                 sleep(5);
                 continue;
             }
-            sleep(15);
+
             $jobIds = array_column($jobs, 'id');
             $this->jobDao->updateBatch($jobIds,
             [
                 'status' => 'reserved',
                 'worker' => getmypid()
             ]);
-            $this->databaseProvider->commitTransaction();
+            $this->databaseProvider->commitTransaction(); // commit após update
 
+            // sleep implementado apenas para testes, remover futuramente antes de lançar o projeto
+            sleep(5);
             $this->processJobs($jobs, $container);
         }
     }
@@ -47,6 +62,8 @@ class QueueWorker
     private function processJobs(array $jobs, Container $container)
     {
         foreach ($jobs as $job) {
+            $jobName = $this->getJobName($job);
+            echo "currently processing - $jobName - ".$job['id']."\n";
             $currentTries = $job['tries'] + 1;
             $this->databaseProvider->initTransaction();
             try {
@@ -59,11 +76,13 @@ class QueueWorker
                     'status' => 'finished'
                 ]);
                 $this->databaseProvider->commitTransaction();
+                echo "finished successfully - $jobName\n";
             } catch (Throwable $e) {
+                echo "failed! - $jobName\n";
                 $this->databaseProvider->rollbackTransaction();
 
                 if ($job['max_tries'] > $currentTries) {
-                    $jobs = $this->jobDao->update([
+                    $this->jobDao->update([
                         'id' => $job['id']
                     ], [
                         'status' => 'pending',
@@ -71,7 +90,7 @@ class QueueWorker
                         'tries' => $currentTries
                     ]);
                 } else {
-                    $jobs = $this->jobDao->update([
+                    $this->jobDao->update([
                         'id' => $job['id']
                     ], [
                         'status' => 'failed',
@@ -80,5 +99,11 @@ class QueueWorker
                 }
             }
         }
+    }
+
+    private function getJobName(array $job): string
+    {
+        $parts = explode("\\", $job['runner_class']);
+        return end($parts);
     }
 }
