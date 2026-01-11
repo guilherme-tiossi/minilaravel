@@ -64,31 +64,6 @@ class Model
         return $this->findBy(['id' => $modelId]);
     }
 
-    public function findBy(array $filters = []): array
-    {
-        $where = '';
-        $params = [];
-    
-        if (!empty($filters)) {
-            $conditions = [];
-        
-            foreach ($filters as $column => $value) {
-                $conditions[] = sprintf('%s = :%s', $column, $column);
-                $params[$column] = $value;
-            }
-        
-            $where = 'WHERE ' . implode(' AND ', $conditions);
-        }
-    
-        $sql = sprintf(
-            'SELECT * FROM %s %s LIMIT 1',
-            $this->table,
-            $where
-        );
-    
-        return $this->databaseProvider->fetchAll($sql, $params);
-    }
-
     public function update(array $filters, array $data): array
     {
         $formattedFilters = '';
@@ -113,6 +88,33 @@ class Model
         $this->databaseProvider->execute($sql, $data);
 
         return $this->findBy($filters);
+    }
+
+    public function findBy(array $filters = []): array
+    {
+        $where = '';
+        $params = [];
+    
+        if (!empty($filters)) {
+            $conditions = [];
+        
+            foreach ($filters as $column => $value) {
+                $conditions[] = sprintf('%s = :%s', $column, $column);
+                $params[$column] = $value;
+            }
+        
+            $where = 'WHERE ' . implode(' AND ', $conditions);
+        }
+    
+        $sql = sprintf(
+            'SELECT * FROM %s %s LIMIT 1',
+            $this->table,
+            $where
+        );
+
+        $result = $this->databaseProvider->fetchAll($sql, $params);
+
+        return $result ? $result[0] : [];
     }
 
     public function delete(array $filters): void
