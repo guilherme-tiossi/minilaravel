@@ -2,7 +2,7 @@
 
 namespace Core\Framework\Event\EventDispatcher;
 
-use Core\Application\Model\Job;
+use Core\Application\Dao\JobDao;
 use Core\Framework\Event\Event;
 use ReflectionClass;
 
@@ -10,7 +10,7 @@ class EventDispatcher
 {
     public function __construct(
         private array $listeners,
-        private Job $jobModel
+        private JobDao $jobDao
     ) {
     }
 
@@ -20,7 +20,7 @@ class EventDispatcher
             if (isset($listener->queue) && $listener->queue) {
                 $eventParams = $this->extractEventParams($event);
 
-                $this->jobModel->create([
+                $this->jobDao->create([
                     'runner_class' => get_class($listener),
                     'event_class' => get_class($event),
                     'event_params' => json_encode($eventParams),

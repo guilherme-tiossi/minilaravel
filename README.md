@@ -1,9 +1,9 @@
 # MiniLaravel
 
-## 🇧🇷 Português
+## Português
 
 Projeto de estudo em PHP puro.  
-A ideia é entender como frameworks como o Laravel funcionam por dentro: roteamento, controllers, models, filas autoload, uma CLI simples e um servidor embutido.
+A ideia é entender como frameworks como o Laravel funcionam por dentro: roteamento, controllers, DAOs, filas, inversão de dependência, uma CLI simples e um servidor embutido.
 
 Nada de framework. Tudo é feito do zero, focando em código limpo e aprendizado.
 
@@ -22,10 +22,10 @@ Basta clonar o projeto e rodar 'docker-compose up -d' que o docker já vai cuida
 
 ---
 
-## 🇺🇸 English
+## English
 
 Study project written in pure PHP.  
-The goal is to understand how frameworks like Laravel work under the hood: routing, controllers, models, queues, autoloading, a simple CLI, and a small built-in server.
+The goal is to understand how frameworks like Laravel work under the hood: routing, controllers, DAOs, queues, dependency inversion, a simple CLI, and a small built-in server.
 
 No frameworks used. Everything is built from scratch in a simple and educational way.
 

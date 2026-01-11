@@ -3,7 +3,7 @@
 namespace Core\Application\Listener;
 
 use Core\Application\Event\UserCreated;
-use Core\Application\Model\User;
+use Core\Application\Dao\UserDao;
 use Throwable;
 
 class SendAccountConfirmationEmail
@@ -12,7 +12,7 @@ class SendAccountConfirmationEmail
     public $maxTries = 9;
 
     public function __construct(
-        private User $userModel
+        private UserDao $userDao
     ) {
     }
 
@@ -22,7 +22,7 @@ class SendAccountConfirmationEmail
         // event/service implementation of this miniframwork, so for now i will not
         // implement a real email sender.
 
-        $this->userModel->update([
+        $this->userDao->update([
             'id' => $event->userId
         ], [
             'received_confirmation_email' => true

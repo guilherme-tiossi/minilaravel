@@ -3,14 +3,14 @@
 namespace Core\Framework\Queue;
 
 use Throwable;
-use Core\Application\Model\Job;
+use Core\Application\Dao\JobDao;
 use Core\Framework\Root\Container;
 use Core\Infrastructure\Database\DatabaseProvider;
 
 class QueueWorker
 {
     public function __construct(
-        private Job $jobModel,
+        private JobDao $jobDao,
         private DatabaseProvider $databaseProvider
     ) {
     }
@@ -20,7 +20,7 @@ class QueueWorker
     {
         while (true) {
             $this->databaseProvider->initTransaction();
-            $jobs = $this->jobModel->get([
+            $jobs = $this->jobDao->get([
                 'queue' => $queueName,
                 'status' => 'pending',
                 'worker' => null
@@ -33,7 +33,7 @@ class QueueWorker
             }
             sleep(15);
             $jobIds = array_column($jobs, 'id');
-            $this->jobModel->updateBatch($jobIds,
+            $this->jobDao->updateBatch($jobIds,
             [
                 'status' => 'reserved',
                 'worker' => getmypid()
@@ -53,7 +53,7 @@ class QueueWorker
                 $jobRunner = $container->make($job['runner_class']);
                 $jobEvent = new $job['event_class'](...json_decode($job['event_params'], true));
                 $jobRunner->run($jobEvent);
-                $this->jobModel->update([
+                $this->jobDao->update([
                     'id' => $job['id']
                 ], [
                     'status' => 'finished'
@@ -62,9 +62,8 @@ class QueueWorker
             } catch (Throwable $e) {
                 $this->databaseProvider->rollbackTransaction();
 
-                dd($e);
                 if ($job['max_tries'] > $currentTries) {
-                    $jobs = $this->jobModel->update([
+                    $jobs = $this->jobDao->update([
                         'id' => $job['id']
                     ], [
                         'status' => 'pending',
@@ -72,7 +71,7 @@ class QueueWorker
                         'tries' => $currentTries
                     ]);
                 } else {
-                    $jobs = $this->jobModel->update([
+                    $jobs = $this->jobDao->update([
                         'id' => $job['id']
                     ], [
                         'status' => 'failed',

@@ -1,10 +1,10 @@
 <?php
 
-namespace Core\Framework\Model;
+namespace Core\Framework\Dao;
 
 use Core\Infrastructure\Database\DatabaseProvider;
 
-class Model
+class BaseDao
 {
     protected string $table;
 
@@ -12,8 +12,6 @@ class Model
         protected DatabaseProvider $databaseProvider
     ) {
     }
-
-    // fazer transactions
 
     public function get(array $filters = []): array
     {
@@ -63,9 +61,9 @@ class Model
 
         $this->databaseProvider->execute($sql, $data);
 
-        $modelId = $this->databaseProvider->getLastInsertedId();
+        $DaoId = $this->databaseProvider->getLastInsertedId();
 
-        return $this->findBy(['id' => $modelId]);
+        return $this->findBy(['id' => $DaoId]);
     }
 
     public function update(array $filters, array $data): array

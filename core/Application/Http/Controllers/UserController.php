@@ -3,7 +3,7 @@
 namespace Core\Application\Http\Controllers;
 
 use Core\Application\Event\UserCreated;
-use Core\Application\Model\User;
+use Core\Application\Dao\UserDao;
 use Core\Framework\Event\EventDispatcher\EventDispatcher;
 use Core\Framework\Http\ValueObjects\Response;
 use Core\Framework\Http\ValueObjects\Request;
@@ -17,14 +17,14 @@ class UserController
     // built in this repo
 
     public function __construct(
-        private User $userModel,
+        private UserDao $userDao,
         private EventDispatcher $eventDispatcher
     ) {
     }
 
     public function list(Request $request): Response
     {
-        $users = $this->userModel->get();
+        $users = $this->userDao->get();
 
         return new Response(httpCode: 200, body: [
             'message' => 'users retrieved successfully',
@@ -55,7 +55,7 @@ class UserController
             ]
         ]);
 
-        $user = $this->userModel->create([
+        $user = $this->userDao->create([
             'name' => $request->body['name'],
             'email' => $request->body['email'],
             'password' => $request->body['password']
@@ -71,7 +71,7 @@ class UserController
 
     public function show(Request $request, string $id): Response
     {
-        $user = $this->userModel->findBy([
+        $user = $this->userDao->findBy([
             'id' => $id
         ]);
 
@@ -98,7 +98,7 @@ class UserController
             ]
         ]);
 
-        $user = $this->userModel->update([
+        $user = $this->userDao->update([
             'id' => $id
         ], [
             'name' => $request->body['name'],
@@ -114,7 +114,7 @@ class UserController
 
     public function delete(Request $request, string $id): Response
     {
-        $this->userModel->delete([
+        $this->userDao->delete([
             'id' => $id
         ]);
 
