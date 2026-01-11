@@ -5,7 +5,6 @@ namespace Core\Application\Http\Controllers;
 use Core\Framework\Http\ValueObjects\Response;
 use Core\Framework\Http\ValueObjects\Request;
 
-// deve eventualmente estender de algum basecontroller
 class MessageController
 {
     public function __construct() 

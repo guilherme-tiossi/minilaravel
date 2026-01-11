@@ -6,7 +6,6 @@ use Core\Application\Model\User;
 use Core\Framework\Http\ValueObjects\Response;
 use Core\Framework\Http\ValueObjects\Request;
 
-// deve eventualmente estender de algum basecontroller
 class UserController
 {
     public function __construct(

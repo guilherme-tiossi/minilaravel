@@ -4,7 +4,6 @@ namespace Core\Framework\Model;
 
 use Core\Infrastructure\Database\DatabaseProvider;
 
-// PASSAR PARA 'mysql model'
 class Model
 {
     protected string $table;
