@@ -2,9 +2,11 @@
 
 namespace Core\Framework\Providers;
 
+use Core\Application\Event\ProposalCreated;
 use Core\Application\Event\UserCreated;
 use Core\Application\Listener\SendAccountConfirmationEmail;
 use Core\Application\Dao\JobDao;
+use Core\Application\Listener\RegisterExternalProposal;
 use Core\Framework\Event\EventDispatcher\EventDispatcher;
 use Core\Framework\Root\Container;
 
@@ -13,6 +15,9 @@ class EventServiceProvider implements Provider
     private array $listen = [
         UserCreated::class => [
             SendAccountConfirmationEmail::class
+        ],
+        ProposalCreated::class => [
+            RegisterExternalProposal::class
         ]
     ]; 
 

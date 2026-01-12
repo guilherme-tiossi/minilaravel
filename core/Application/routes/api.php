@@ -1,10 +1,14 @@
 <?php
 
 use Core\Application\Http\Controllers\MessageController;
+use Core\Application\Http\Controllers\ProposalController;
 use Core\Application\Http\Controllers\UserController;
 use Core\Framework\Http\Enums\HttpMethod;
 use Core\Framework\Http\Router;
 use Core\Application\Http\Middlewares\IpBlacklist;
+
+
+Router::addRoute(HttpMethod::POST,'/proposals', ProposalController::class, 'create');
 
 Router::group(IpBlacklist::class, [
     [HttpMethod::GET, '/users', UserController::class, 'list'],

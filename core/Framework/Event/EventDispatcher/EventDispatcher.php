@@ -27,7 +27,7 @@ class EventDispatcher
                     'status' => 'pending',
                     'worker' => null,
                     'queue' => $listener->queue,
-                    'max_tries' => $runnerClass->maxTries ?? 1
+                    'max_tries' => $listener->maxTries ?? 1
                 ]);
 
                 return;
