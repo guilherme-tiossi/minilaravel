@@ -97,6 +97,7 @@ class QueueWorker
                         'tries' => $currentTries
                     ]);
                 }
+                $jobRunner->failed($jobEvent, $e);
             }
         }
     }

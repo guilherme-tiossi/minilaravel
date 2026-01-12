@@ -4,6 +4,7 @@ namespace Core\Application\Listener;
 
 use Core\Application\Event\UserCreated;
 use Core\Application\Dao\UserDao;
+use Core\Application\Dao\LogDao;
 use Throwable;
 
 class SendAccountConfirmationEmail
@@ -12,7 +13,8 @@ class SendAccountConfirmationEmail
     public $maxTries = 9;
 
     public function __construct(
-        private UserDao $userDao
+        private UserDao $userDao,
+        private LogDao $logDao
     ) {
     }
 
@@ -31,6 +33,12 @@ class SendAccountConfirmationEmail
 
     public function failed(UserCreated $event, ?Throwable $e = null): void
     {
-        // log something in the future  
+        $this->logDao->create([
+            'context'        => 'SendAccountConfirmationEmail',
+            'error_message'  => $e?->getMessage(),
+            'error_code'     => $e?->getCode(),
+            'exception'      => $e ? get_class($e) : null,
+            'stack_trace'    => $e?->getTraceAsString()
+        ]);
     }
 }
