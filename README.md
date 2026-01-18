@@ -2,42 +2,108 @@
 
 ## Português
 
-Projeto de estudo em PHP puro.  
-A ideia é entender como frameworks como o Laravel funcionam por dentro: roteamento, controllers, DAOs, filas, inversão de dependência, uma CLI simples e um servidor embutido.
+Projeto de estudo em PHP puro, com o objetivo de entender e implementar, do zero, os principais componentes de um framework moderno inspirado no Laravel para aprender mais profundamente como ele funciona por dentro: ciclo de requisição, container de dependências, middlewares, filas, eventos, acesso a dados, etc.
+Tudo é construído manualmente priorizando clean code, separação de responsabilidades e aprendizado.
 
-Nada de framework. Tudo é feito do zero, focando em código limpo e aprendizado.
+### Principais conceitos implementados
 
-### O que o projeto já tem
-- Router básico
-- Controllers organizados
-- CLI `miniartisan` (run, routes, help)
-- Servidor embutido rodando na porta 8080
-- Estrutura inspirada em frameworks como Laravel
+- **Router próprio**, baseado em objetos de rota
+- **Controllers organizados**
+- **Sistema de Middlewares**
+  - Chain of Responsibility
+  - Middlewares globais
+  - CORS
+  - Rate Limiter
+- **Container de Inversão de Dependência (DI)**
+  - Resolução automática de dependências
+  - Service Providers
+- **Camada de acesso a dados**
+  - DAOs (Data Access Objects)
+  - Conexão via PDO
+  - Suporte a transações
+- **Sistema de filas**
+  - Workers múltiplos
+  - Controle de retries
+  - Processamento concorrente básico
+- **Eventos e Listeners**
+- **Validação de dados de requisição**
+- **CLI própria** (`miniartisan`)
+  - Comandos como `run`, `routes`, `help`
+- **Servidor embutido**
+  - Rodando por padrão na porta `8080`
+- **Estrutura inspirada em frameworks como Laravel**, mas com implementação própria
 
-### Objetivo
-Aprender a construir as partes principais de um framework moderno e melhorar domínio de PHP puro.
+### Objetivo do projeto
+
+- Entender, na prática, como frameworks PHP modernos são estruturados
+- Aprimorar domínio de PHP puro
+- Explorar conceitos como:
+  - Inversão de dependência
+  - Filas e concorrência
+  - Arquitetura orientada a eventos
+  - Pipeline de middlewares
+  - Separação clara entre camadas
 
 ### Como iniciar
-Basta clonar o projeto e rodar 'docker-compose up -d' que o docker já vai cuidar de tudo - o projeto estará acessível pelo localhost:8080
+
+Basta clonar o projeto e executar:
+
+```bash
+docker-compose up -d
+```
+O projeto ficará disponível em: `http://localhost:8080`
 
 ---
 
 ## English
 
-Study project written in pure PHP.  
-The goal is to understand how frameworks like Laravel work under the hood: routing, controllers, DAOs, queues, dependency inversion, a simple CLI, and a small built-in server.
+Study project written in pure PHP, focused on understanding and implementing the core building blocks of a modern web framework inspired by Laravel to more deeply understand how they work internally: request lifecycle, dependency injection, middleware pipelines, queues, events, and data access layers.
+Everything is built from scratch with a strong focus on clean structure and learning.
 
-No frameworks used. Everything is built from scratch in a simple and educational way.
+### Main implemented concepts
 
-### Current features
-- Basic router
-- Simple controller structure
-- `miniartisan` CLI (run, routes, help)
-- Built-in server running on port 8080
-- Structure inspired by frameworks like Laravel
+- **Custom router**, based on route objects
+- **Organized controller layer**
+- **Middleware system**
+  - Chain of Responsibility
+  - Global middlewares
+  - CORS handling
+  - Rate limiter
+- **Dependency Injection Container**
+  - Automatic dependency resolution
+  - Service Providers
+- **Data access layer**
+  - DAOs (Data Access Objects)
+  - PDO database connection
+  - Transaction support
+- **Queue system**
+  - Multiple intelligent workers
+  - Retry handling
+  - Basic concurrent processing
+- **Events and listeners**
+- **Request data validation**
+- **Custom CLI** (`miniartisan`)
+  - Commands like `run`, `routes`, `help`
+- **Built-in server**
+  - Running on port `8080`
+- **Structure inspired by Laravel**, with fully custom implementations
 
-### Purpose
-Learn how the main pieces of a modern framework are built and improve understanding of pure PHP.
+### Project purpose
 
-### How to start
-Just clone the project and run docker-compose up -d. Docker sets up everything automatically — the project will be available at localhost:8080.
+- Learn how modern PHP frameworks are internally built
+- Improve technical abilities in pure PHP
+- Practice architectural concepts such as:
+  - Dependency Inversion
+  - Queues and workers
+  - Event-driven architecture
+  - Middleware pipelines
+  - Clear separation of concerns
+
+### How to run
+
+Clone the project and run:
+
+```bash
+docker-compose up -d
+```
+The project will be available at: `http://localhost:8080`
