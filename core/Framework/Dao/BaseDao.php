@@ -54,29 +54,46 @@ class BaseDao
         return $this->databaseProvider->fetchAll($sql, $params);
     }
 
-    public function create(array $data): array
+    public function create(array $data): array|bool
     {
+        if (isset($data[0]) && is_array($data[0])) {
+            foreach ($data as $row) {
+                $columns = array_keys($row);
+                $placeholders = array_map(fn($c) => ':' . $c, $columns);
+    
+                $sql = sprintf(
+                    'INSERT INTO %s (%s) VALUES (%s)',
+                    $this->table,
+                    implode(', ', $columns),
+                    implode(', ', $placeholders)
+                );
+    
+                $this->databaseProvider->execute($sql, $row);
+            }
+    
+            return true;
+        }
+    
         $columns = [];
         $values = [];
-
+    
         foreach ($data as $column => $value) {
             $columns[] = $column;
             $values[] = ':' . $column;
         }
-
+    
         $sql = sprintf(
             'INSERT INTO %s (%s) VALUES (%s)',
             $this->table,
             implode(', ', $columns),
             implode(', ', $values)
         );
-
+    
         $this->databaseProvider->execute($sql, $data);
-
-        $DaoId = $this->databaseProvider->getLastInsertedId();
-
-        // alterar esse cara aqui pq update pode retornar vários
-        return $this->findBy(['id' => $DaoId]);
+    
+        $daoId = $this->databaseProvider->getLastInsertedId();
+    
+        return $this->findBy(['id' => $daoId]);
     }
 
     public function update(array $filters, array $data): array
@@ -122,14 +139,14 @@ class BaseDao
         }
     
         $sql = sprintf(
-            'SELECT * FROM %s %s LIMIT 1',
+            'SELECT * FROM %s %s',
             $this->table,
             $where
         );
 
         $result = $this->databaseProvider->fetchAll($sql, $params);
 
-        return $result ? $result[0] : [];
+        return count($result) == 1 ? $result[0] : $result;
     }
 
     public function updateBatch(array $ids, array $data): void

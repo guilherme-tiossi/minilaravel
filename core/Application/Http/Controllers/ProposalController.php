@@ -10,7 +10,7 @@ use Core\Framework\Http\ValueObjects\Request;
 
 class ProposalController
 {
-    // this controller had a lot of logic in it, ideally all of this would be
+    // this controller has a lot of logic in it, ideally all of this would be
     // inside of usecases and services - however, the intention of this project
     // is to build the backend framework tools that allow future developers to build
     // better code. this is just an example of a possible implementation of the tools

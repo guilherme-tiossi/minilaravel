@@ -48,7 +48,7 @@ class QueueWorker
                 'status' => 'reserved',
                 'worker' => getmypid()
             ]);
-            $this->databaseProvider->commitTransaction(); // commit após update
+            $this->databaseProvider->commitTransaction();
 
             // sleep implementado apenas para testes, remover futuramente antes de lançar o projeto
             sleep(15);
