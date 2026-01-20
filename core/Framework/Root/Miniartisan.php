@@ -28,7 +28,9 @@ class Miniartisan
     {
         echo "List of available commands:\n";
         echo "php miniartisan run # starts the server\n";
+        echo "php miniartisan routes # lists all available routes\n";
         echo "php miniartisan help # lists available commands\n";
+        echo "php miniartisan queue:work {queueName} # starts specific queue. replace {queueName} with the actual queue name\n";
         exit();
     }
 

@@ -1,5 +1,15 @@
 <?php
 
+use Core\Framework\Root\Container;
+
+function app($abstract = null) {
+    if (is_null($abstract)) {
+        return Container::getInstance();
+    }
+
+    return Container::getInstance()->make($abstract);
+}
+
 function dd()
 {
     foreach (func_get_args() as $x) {
@@ -8,7 +18,7 @@ function dd()
     die;
 }
 
-function app(string $path)
+function find(string $path)
 {
     $dir = getcwd();
 

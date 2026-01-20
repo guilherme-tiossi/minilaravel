@@ -6,7 +6,6 @@ use Throwable;
 use Core\Application\Dao\JobDao;
 use Core\Framework\Root\Container;
 use Core\Infrastructure\Database\DatabaseProvider;
-use Exception;
 
 class QueueWorker
 {
@@ -16,16 +15,14 @@ class QueueWorker
     ) {
     }
 
-    // mudar, container não pode ser usado aqui
-    public function work(string $queueName, Container $container)
-    {
+    public function work(string $queueName)
+    { 
         echo "running jobs from $queueName :D \n";
         echo "worker:" . getmypid() . "\n";
 
         while (true) {
             $this->databaseProvider->initTransaction();
 
-            // mudar para suportar um optionsDto
             $jobs = $this->jobDao->get([
                 'queue' => $queueName,
                 'status' => 'pending',
@@ -54,12 +51,12 @@ class QueueWorker
             $this->databaseProvider->commitTransaction(); // commit após update
 
             // sleep implementado apenas para testes, remover futuramente antes de lançar o projeto
-            sleep(5);
-            $this->processJobs($jobs, $container);
+            sleep(15);
+            $this->processJobs($jobs);
         }
     }
 
-    private function processJobs(array $jobs, Container $container)
+    private function processJobs(array $jobs)
     {
         foreach ($jobs as $job) {
             $jobName = $this->getJobName($job);
@@ -67,7 +64,7 @@ class QueueWorker
             $currentTries = $job['tries'] + 1;
             $this->databaseProvider->initTransaction();
             try {
-                $jobRunner = $container->make($job['runner_class']);
+                $jobRunner = app()->make($job['runner_class']);
                 $jobEvent = new $job['event_class'](...json_decode($job['event_params'], true));
                 $jobRunner->run($jobEvent);
                 $this->jobDao->update([

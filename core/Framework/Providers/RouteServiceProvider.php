@@ -8,6 +8,6 @@ class RouteServiceProvider implements Provider
 {
     public function register(?Container &$container = null): void
     {
-        app('Application/routes/api.php');
+        find('Application/routes/api.php');
     }
 }

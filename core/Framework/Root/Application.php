@@ -15,6 +15,7 @@ class Application
     public function __construct(
         public Container $container
     ) {
+        Container::setInstance($container);
         $this->register();
     }
 
