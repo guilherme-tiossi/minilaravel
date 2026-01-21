@@ -9,8 +9,8 @@ use Throwable;
 
 class SendAccountConfirmationEmail
 {
-    public $queue = 'teste';
-    public $maxTries = 9;
+    public $queue = 'email';
+    public $maxTries = 3;
 
     public function __construct(
         private UserDao $userDao,
@@ -21,7 +21,7 @@ class SendAccountConfirmationEmail
     public function run(UserCreated $event): void
     {
         // this class exists only to serve as an example of the functionality of the
-        // event/service implementation of this miniframwork, so for now i will not
+        // event/listener implementation of this miniframwork, so for now i will not
         // implement a real email sender.
 
         $this->userDao->update([

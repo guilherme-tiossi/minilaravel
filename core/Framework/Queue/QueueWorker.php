@@ -50,8 +50,6 @@ class QueueWorker
             ]);
             $this->databaseProvider->commitTransaction();
 
-            // sleep implementado apenas para testes, remover futuramente antes de lançar o projeto
-            sleep(15);
             $this->processJobs($jobs);
         }
     }
